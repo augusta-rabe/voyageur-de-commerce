@@ -23,7 +23,6 @@ class TSPGeneticApp:
         frm = ttk.Frame(root)
         frm.pack(pady=5)
 
-        # Champs configurables
         self.num_cities_var = tk.IntVar(value=DEFAULT_NUM_CITIES)
         self.pop_size_var = tk.IntVar(value=DEFAULT_POP_SIZE)
         self.num_gen_var = tk.IntVar(value=DEFAULT_NUM_GENERATIONS)
@@ -117,6 +116,31 @@ class TSPGeneticApp:
         plt.title("Optimisation TSP - Algorithme Génétique")
         plt.tight_layout()
         plt.show()
+
+        # === Sauvegarde des résultats ===
+        # 1. Image du trajet optimal
+        fig_final, ax_final = plt.subplots()
+        ax_final.set_title("Trajet optimal trouvé")
+        ordered = cities[best_path + [best_path[0]]]
+        ax_final.plot(ordered[:, 0], ordered[:, 1], 'o-', lw=2, color='green')
+        for i, (x, y) in enumerate(cities):
+            ax_final.text(x, y, str(i), fontsize=8, ha='right')
+        ax_final.set_xlim(0, 100)
+        ax_final.set_ylim(0, 100)
+        fig_final.tight_layout()
+        fig_final.savefig("trajet_optimal.png")
+
+        # 2. Export CSV : coordonnées des villes et ordre du trajet
+        import csv
+        with open("trajet_optimal.csv", "w", newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(["Ordre", "Ville", "X", "Y"])
+            for i, city_index in enumerate(best_path):
+                x, y = cities[city_index]
+                writer.writerow([i+1, city_index, x, y])
+            x, y = cities[best_path[0]]
+            writer.writerow([len(best_path)+1, best_path[0], x, y])
+        print("Résultats enregistrés : 'trajet_optimal.png' et 'trajet_optimal.csv'")
 
 if __name__ == "__main__":
     root = tk.Tk()
