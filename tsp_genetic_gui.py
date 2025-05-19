@@ -118,6 +118,11 @@ class TSPGeneticApp:
         plt.show()
 
         # === Sauvegarde des résultats ===
+        # Création du dossier resultats s'il n'existe pas
+        import os
+        if not os.path.exists("resultats"):
+            os.makedirs("resultats")
+
         # 1. Image du trajet optimal
         fig_final, ax_final = plt.subplots()
         ax_final.set_title("Trajet optimal trouvé")
@@ -128,11 +133,11 @@ class TSPGeneticApp:
         ax_final.set_xlim(0, 100)
         ax_final.set_ylim(0, 100)
         fig_final.tight_layout()
-        fig_final.savefig("trajet_optimal.png")
+        fig_final.savefig("resultats/trajet_optimal.png")
 
         # 2. Export CSV : coordonnées des villes et ordre du trajet
         import csv
-        with open("trajet_optimal.csv", "w", newline='') as csvfile:
+        with open("resultats/trajet_optimal.csv", "w", newline='') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Ordre", "Ville", "X", "Y"])
             for i, city_index in enumerate(best_path):
@@ -140,7 +145,7 @@ class TSPGeneticApp:
                 writer.writerow([i+1, city_index, x, y])
             x, y = cities[best_path[0]]
             writer.writerow([len(best_path)+1, best_path[0], x, y])
-        print("Résultats enregistrés : 'trajet_optimal.png' et 'trajet_optimal.csv'")
+        print("Résultats enregistrés dans le dossier 'resultats' : 'trajet_optimal.png' et 'trajet_optimal.csv'")
 
 if __name__ == "__main__":
     root = tk.Tk()
