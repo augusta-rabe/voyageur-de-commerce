@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import tkinter as tk
 from tkinter import ttk
+from tkinter import font as tkfont
 
 # === Paramètres par défaut ===
 DEFAULT_NUM_CITIES = 20
@@ -15,31 +16,75 @@ class TSPGeneticApp:
     def __init__(self, root):
         self.root = root
         self.root.title("TSP - Algorithme Génétique Évolué")
-        self.root.geometry("450x400")
+        self.root.geometry("600x500")
         self.root.resizable(False, False)
 
-        ttk.Label(root, text="Optimisation du Voyageur de Commerce", font=("Helvetica", 14, "bold")).pack(pady=10)
+        # Configuration du style
+        style = ttk.Style()
+        style.configure("TFrame", background="#f0f0f0")
+        style.configure("TLabel", background="#f0f0f0", foreground="#333333")
+        style.configure("TButton", padding=10, font=('Helvetica', 11, 'bold'))
+        style.configure("TLabelframe", background="#f0f0f0")
+        style.configure("TLabelframe.Label", background="#f0f0f0", foreground="#2196F3", font=('Helvetica', 10, 'bold'))
+
+        # Configuration des couleurs
+        self.bg_color = "#f0f0f0"
+        self.accent_color = "#2196F3"
+        self.text_color = "#333333"
+        self.root.configure(bg=self.bg_color)
+
+        # Création du conteneur principal
+        main_container = ttk.Frame(root, padding="20")
+        main_container.pack(fill='both', expand=True)
+
+        # En-tête
+        header_frame = ttk.Frame(main_container)
+        header_frame.pack(fill='x', pady=(0, 20))
         
-        frm = ttk.Frame(root)
-        frm.pack(pady=5)
+        title_font = tkfont.Font(family="Helvetica", size=16, weight="bold")
+        ttk.Label(header_frame, 
+                 text="Optimisation du Voyageur de Commerce",
+                 font=title_font,
+                 foreground=self.accent_color).pack()
+
+        # Frame pour les paramètres
+        params_frame = ttk.LabelFrame(main_container, text="Paramètres de l'algorithme", padding="15")
+        params_frame.pack(fill='x', pady=10)
 
         self.num_cities_var = tk.IntVar(value=DEFAULT_NUM_CITIES)
         self.pop_size_var = tk.IntVar(value=DEFAULT_POP_SIZE)
         self.num_gen_var = tk.IntVar(value=DEFAULT_NUM_GENERATIONS)
         self.mutation_rate_var = tk.DoubleVar(value=DEFAULT_MUTATION_RATE)
 
-        self._create_labeled_entry(frm, "Nombre de villes :", self.num_cities_var)
-        self._create_labeled_entry(frm, "Taille de population :", self.pop_size_var)
-        self._create_labeled_entry(frm, "Nombre de générations :", self.num_gen_var)
-        self._create_labeled_entry(frm, "Taux de mutation (0.0 - 1.0) :", self.mutation_rate_var)
+        self._create_labeled_entry(params_frame, "Nombre de villes :", self.num_cities_var)
+        self._create_labeled_entry(params_frame, "Taille de population :", self.pop_size_var)
+        self._create_labeled_entry(params_frame, "Nombre de générations :", self.num_gen_var)
+        self._create_labeled_entry(params_frame, "Taux de mutation (0.0 - 1.0) :", self.mutation_rate_var)
 
-        ttk.Button(root, text="Lancer la simulation", command=self.launch_simulation).pack(pady=20)
+        # Bouton de lancement
+        button_frame = ttk.Frame(main_container)
+        button_frame.pack(fill='x', pady=20)
+        
+        launch_button = ttk.Button(button_frame, 
+                                 text="Lancer la simulation",
+                                 command=self.launch_simulation,
+                                 style='Accent.TButton')
+        launch_button.pack(pady=10)
 
     def _create_labeled_entry(self, parent, label, variable):
         frame = ttk.Frame(parent)
-        frame.pack(pady=3, fill='x')
-        ttk.Label(frame, text=label, width=30).pack(side='left')
-        ttk.Entry(frame, textvariable=variable, width=10).pack(side='right')
+        frame.pack(pady=5, fill='x')
+        
+        label_widget = ttk.Label(frame, 
+                               text=label,
+                               font=('Helvetica', 10))
+        label_widget.pack(side='left', padx=(0, 10))
+        
+        entry = ttk.Entry(frame,
+                         textvariable=variable,
+                         width=15,
+                         font=('Helvetica', 10))
+        entry.pack(side='right', fill='x', expand=True)
 
     def launch_simulation(self):
         num_cities = self.num_cities_var.get()
